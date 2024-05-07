@@ -8,25 +8,31 @@ namespace BlackjackConsole
 {
     class Deck
     {
-        public List<Card> cardDeck = new();
+        private List<Card> cardDeck = new();
+        public List<Card> CardDeck { get => cardDeck; set => cardDeck = value; }
         Random random = new Random();
         public List<Card> BuildCardDeck()
         {
             Deck deck = new Deck();
-            for (int suits=0; suits<=4; suits++)
+            for (int suits=0; suits<4; suits++)
             {
-                for (int rank=0; rank<=13; rank++)
+                for (int rank=0; rank<13; rank++)
                 {
                     Card card = new Card();
                     card.Suit = ((Enums.Suits)suits).ToString();
                     card.Rank = ((Enums.Ranks)rank).ToString();
                     if (rank > 10)
                     {
-                        card.Value = rank;
-                    }     
+                        card.Value = 10;
+                    }
+                    else
+                    {
+                        card.Value = rank+1;
+                    }
+                    deck.CardDeck.Add(card);
                 }
             }
-            return ShuffleDeck(deck.cardDeck);
+            return ShuffleDeck(deck.CardDeck);
         }
         public List<Card> ShuffleDeck(List<Card> cardDeck)
         {
