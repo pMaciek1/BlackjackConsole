@@ -21,7 +21,7 @@ namespace BlackjackConsole
                     Card card = new Card();
                     card.Suit = ((Enums.Suits)suits).ToString();
                     card.Rank = ((Enums.Ranks)rank).ToString();
-                    if (rank > 10)
+                    if (rank > 9)
                     {
                         card.Value = 10;
                     }
