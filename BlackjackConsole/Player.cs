@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,7 +30,7 @@ namespace BlackjackConsole
             points -= firstCard.Value;
             return points;
         }
-        public void PlayerAces() //TODO !!!!!!!!!!!!!!!!! FIX IT, DOESNT ADD TEN POINTS WHEN IT SHGOUDL TODO!
+        public void PlayerAces() //fixed :)
         {
             List<Card> aces = playerHand.FindAll(x => x.Rank == "Ace");
             if (aces.Count > 0)
@@ -41,8 +42,12 @@ namespace BlackjackConsole
                     playerHand.Remove(playerHand.FindLast(x => x.Rank == "Ace"));
                     count++;
                     Console.WriteLine($"\n\n{count} ACE:");
-                    Console.Write("How do you want the ace to count? y-1/n-11");
-                    string decision = Console.ReadLine();
+                    string decision = "";
+                    while (decision != "y" && decision != "n")
+                    {
+                        Console.Write("How do you want the ace to count? y-1/n-11: ");
+                        decision = Console.ReadLine();
+                    }
                     if (decision == "n")
                     {
                         ace.Value = 11;
@@ -50,7 +55,6 @@ namespace BlackjackConsole
                     playerHand.Add(ace);
                 }
             }
-            
         }
         public void ComputerAces()
         {
@@ -70,7 +74,22 @@ namespace BlackjackConsole
                     Console.WriteLine($"Computer decided that the ace counts as {ace.Value}");
                 }
             }
-
+        }
+        public static void ComputerDraw(int computerTotal, Deck deck, Player computer, Dealer dealer)
+        {
+            if (computerTotal == 0)
+            {
+                dealer.DealFirstCard(deck, computer);
+            }
+            else if (computerTotal <= 15)
+            {
+                Console.WriteLine("\nComputer decides to draw");
+                dealer.DealCard(deck, computer, "Computer");
+            }
+            else
+            {
+                Console.WriteLine("\nComputer decides to hold");
+            }
         }
     }
 }

@@ -13,6 +13,7 @@
             int computerPoints = 0;
             int computerTotal = 0;
             Console.WriteLine("Blackjack game! :)");
+            Console.Write("Press any key to start the game");
             Console.ReadLine();
             while (isGame)
             {
@@ -23,20 +24,7 @@
                     Console.Clear();
                     deck.CardDeck = deck.BuildCardDeck();
                     dealer.DealCard(deck, player, "Player");
-                    if(computerTotal == 0)
-                    {
-                        dealer.DealFirstCard(deck, computer);
-                    }
-                    else if(computerTotal <= 15)
-                    {
-                        Console.WriteLine("Computer decides to draw");
-                        dealer.DealCard(deck, computer, "Computer");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Computer decides to hold");
-                    }
-                    
+                    Player.ComputerDraw(computerTotal, deck, computer, dealer);
                     playerPoints = player.GetPlayerPoints();
                     computerPoints = computer.GetComputerPoints();
                     computerTotal = computer.GetPlayerPoints();
@@ -46,51 +34,36 @@
                     {
                         break;
                     }
-                    Console.Write("\n\nDo you want to draw? y/n: ");
-                    string playerDecision = Console.ReadLine();
+                    string playerDecision = "";
+                    while (playerDecision != "y" && playerDecision != "n")
+                    {
+                        Console.Write("\n\nDo you want to draw? y/n: ");
+                        playerDecision = Console.ReadLine();
+                    }
                     if (playerDecision == "n")
                     {
+                        while (computerTotal < 16)
+                        {
+                            Player.ComputerDraw(computerTotal, deck, computer, dealer);
+                            computerTotal = computer.GetPlayerPoints();
+                        }
+                        Console.WriteLine("\nComputer decides to hold");
                         gameOver = true;
                     }
                 }
+                Console.WriteLine("\n\n\nGame is over. Let's count the points");
                 player.PlayerAces();
                 computer.ComputerAces();
+                playerPoints = player.GetPlayerPoints();
                 computerTotal = computer.GetPlayerPoints();
-                Console.WriteLine($"\n\n\nComputer's total points are {computerTotal}");
-                Console.WriteLine($"\nPlayer's total points are {playerPoints}");
-                if (playerPoints == 21)
+                Console.WriteLine($"\nComputer's first card was {computer.playerHand.First().Rank} of {computer.playerHand.First().Suit}");
+                WhoWins(playerPoints, computerTotal);
+                string decision = "";
+                while (decision != "y" && decision != "n")
                 {
-                    Console.WriteLine("\nYou win by having blackjack! Congrats!");
+                    Console.Write("\n\n\nDo you want to play another game? y/n: ");
+                    decision = Console.ReadLine();
                 }
-                else if (playerPoints > 21)
-                {
-                    Console.WriteLine("\nYour total points are greater than 21! You lose!");
-                }
-                else
-                {
-                    if (computerPoints > 21)
-                    {
-                        Console.WriteLine("You win, computer have more than 21");
-                    }
-                    else
-                    {
-                        if (playerPoints > computerTotal)
-                        {
-                            Console.WriteLine("\nYou win by having more points than compuer!");
-                        }
-                        else if (computerTotal > playerPoints)
-                        {
-                            Console.WriteLine("\nComputer wins by having more points than you!");
-                        }
-                        else
-                        {
-                            Console.WriteLine("\nDraw!");
-                        }
-                    }
-                    
-                }
-                Console.Write("\n\n\nDo you want to play another game? y/n");
-                string decision = Console.ReadLine();
                 if (decision == "n")
                 {
                     isGame = false;
@@ -103,6 +76,42 @@
                 gameOver = false;
             }
             
+        }
+        public static void WhoWins(int playerPoints, int computerTotal)
+        {
+            Console.WriteLine($"\n\n\nComputer's total points are {computerTotal}");
+            Console.WriteLine($"\nPlayer's total points are {playerPoints}");
+            if (playerPoints == 21)
+            {
+                Console.WriteLine("\nYou win by having blackjack! Congrats!");
+            }
+            else if (playerPoints > 21)
+            {
+                Console.WriteLine("\nYour total points are greater than 21! You lose!");
+            }
+            else
+            {
+                if (computerTotal > 21)
+                {
+                    Console.WriteLine("You win, computer has more than 21");
+                }
+                else
+                {
+                    if (playerPoints > computerTotal)
+                    {
+                        Console.WriteLine("\nYou win by having more points than compuer!");
+                    }
+                    else if (computerTotal > playerPoints)
+                    {
+                        Console.WriteLine("\nComputer wins by having more points than you!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nDraw!");
+                    }
+                }
+
+            }
         }
     }
 }
