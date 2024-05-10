@@ -5,8 +5,8 @@
         static void Main(string[] args)
         {
             bool isMenu = true;
-            bool isGame = true;
-            bool gameOver = false;
+            bool isGame;
+            bool gameOver;
             Dealer dealer = new Dealer();
             Player player = new Player();
             Player computer = new Player();
@@ -17,7 +17,7 @@
             int gameNumber = 1;
             Console.WriteLine("Blackjack game! :)");
             Console.Write("Press any key to enter the menu");
-            Console.ReadLine();
+            Console.ReadKey();
             while (isMenu)
             {
                 Console.WriteLine("\n1-Start new game\n2-View game history\n3-Exit the game");
@@ -26,6 +26,8 @@
                 {
                     case "1":
                         Console.Clear();
+                        isGame = true;
+                        gameOver = false;
                         Game();
                         Console.Clear();
                         break;
@@ -90,8 +92,8 @@
                     game.Winner = WhoWins(playerPoints, computerTotal);
                     game.PlayerPoints = playerPoints;
                     game.ComputerPoints = computerTotal;
-                    game.PlayerCards = player.playerHand;
-                    game.ComputerCards = computer.playerHand;
+                    game.PlayerCards.AddRange(player.playerHand);
+                    game.ComputerCards.AddRange(computer.playerHand);
                     game.GameId = gameNumber;
                     gameList.Games.Add(game);
                     string decision = "";
@@ -113,70 +115,76 @@
                     gameOver = false;
                 }
             }
-            
             void History()
             {
                 if(gameList.Games.Count > 0)
                 {
                     foreach(GameModel game in gameList.Games)
                     {
-                        Console.WriteLine($"Game ID: {game.GameId}\nWinner: {game.Winner}\nPlayer points: {game.PlayerPoints}\nComputer points: {game.ComputerPoints}");
-                        Console.WriteLine($"Player cards: ");
+                        Console.WriteLine($"\n\nGame ID: {game.GameId}\nWinner: {game.Winner}\nPlayer points: {game.PlayerPoints}\nComputer points: {game.ComputerPoints}");
+                        Console.Write($"Player cards: ");
                         foreach(Card card in game.PlayerCards)
                         {
-                            Console.Write($"{card.Rank} of {card.Suit}, "); //TODO
+                            Console.Write($"{card.Rank} of {card.Suit}, ");
                         }
+                        Console.Write($"\b \b\b \b\nComputer cards: ");
+                        foreach (Card card in game.ComputerCards)
+                        {
+                            Console.Write($"{card.Rank} of {card.Suit}, ");
+                        }
+                        Console.Write($"\b \b\b \b");
                     }
                 }
                 else
                 {
                     Console.WriteLine("No played games yet");
                 }
-                Console.Write("Press any key to return to the main menu");
-                Console.ReadLine();
+                Console.Write("\n\nPress any key to return to the main menu");
+                Console.ReadKey();
             }
-        }
-        public static string WhoWins(int playerPoints, int computerTotal)
-        {
-            Console.WriteLine($"\n\n\nComputer's total points are {computerTotal}");
-            Console.WriteLine($"\nPlayer's total points are {playerPoints}");
-            if (playerPoints == 21)
+            string WhoWins(int playerPoints, int computerTotal)
             {
-                Console.WriteLine("\nYou win by having blackjack! Congrats!");
-                return "Player";
-            }
-            else if (playerPoints > 21)
-            {
-                Console.WriteLine("\nYour total points are greater than 21! You lose!");
-                return "Computer";
-            }
-            else
-            {
-                if (computerTotal > 21)
+                Console.WriteLine($"\n\n\nComputer's total points are {computerTotal}");
+                Console.WriteLine($"\nPlayer's total points are {playerPoints}");
+                if (playerPoints == 21)
                 {
-                    Console.WriteLine("You win, computer has more than 21");
+                    Console.WriteLine("\nYou win by having blackjack! Congrats!");
                     return "Player";
+                }
+                else if (playerPoints > 21)
+                {
+                    Console.WriteLine("\nYour total points are greater than 21! You lose!");
+                    return "Computer";
                 }
                 else
                 {
-                    if (playerPoints > computerTotal)
+                    if (computerTotal > 21)
                     {
-                        Console.WriteLine("\nYou win by having more points than compuer!");
+                        Console.WriteLine("You win, computer has more than 21");
                         return "Player";
-                    }
-                    else if (computerTotal > playerPoints)
-                    {
-                        Console.WriteLine("\nComputer wins by having more points than you!");
-                        return "Computer";
                     }
                     else
                     {
-                        Console.WriteLine("\nDraw!");
-                        return "Draw";
+                        if (playerPoints > computerTotal)
+                        {
+                            Console.WriteLine("\nYou win by having more points than compuer!");
+                            return "Player";
+                        }
+                        else if (computerTotal > playerPoints)
+                        {
+                            Console.WriteLine("\nComputer wins by having more points than you!");
+                            return "Computer";
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nDraw!");
+                            return "Draw";
+                        }
                     }
-                }
 
+                }
             }
         }
+        
     }
 }
